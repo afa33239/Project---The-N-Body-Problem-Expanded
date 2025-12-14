@@ -1,0 +1,35 @@
+DATE: 14/12/25
+Integrator: LeapFrog (sympletic)
+dt, steps, softening: 
+
+dt = 2e-4
+timesteps = 5000
+softening = 0.0
+
+Scenario:
+
+Two-body Sun–planet system in 2D.
+Planet initialized on circular orbit at r = 1 with v = 2π.
+Sun given compensating velocity to ensure total linear momentum ≈ 0.
+Used as a baseline validation test for conservation laws.
+
+Expected:
+
+Total energy should exhibit small bounded oscillations with no secular drift.
+COM-frame angular momentum should be conserved to machine precision.
+Linear momentum should remain constant (center of mass stationary).
+
+Observed max energy drift: 
+
+1e-11 (bounded oscillation, no secular trend)
+
+Observed max L_com drift:
+
+1e-15 (machine precision)
+
+Observed max |P| drift:
+
+Not explicitly measured in this test.
+COM remains stationary, implying |P| ≈ 0 within numerical precision.
+
+Next action: Add explicit linear momentum and center-of-mass drift diagnostics to complete Phase 2 validation.

@@ -34,15 +34,15 @@ def compute_com_angular_momentum(bodies):
 # -------------------------------
 # Initial Conditions
 # -------------------------------
-sun = Body(10000.0, 0.0, 0.0, 0.0, 0.0)
-planet = Body(1.0, 1.0, 0.0, 0.0, 2 * math.pi)
+sun = Body(1.0, 0, 0, 0, -0.001 * 2 * math.pi)
+planet = Body(0.001, 1, 0, 0, 2 * math.pi)
 
 cfg = SimulationConfig(dt=0.0002, timesteps=5000, softening=0.0)
 
 bodies = [sun, planet]
 
 sim = Simulation(bodies, cfg, integrator=LeapfrogIntegrator())
-sim.run()
+_ = sim.run()
 
 # -------------------------------
 # Compute COM-Frame Angular Momentum Drift
@@ -82,3 +82,19 @@ plt.title("Angular Momentum Drift (COM Frame)")
 plt.xlabel("Timestep")
 plt.ylabel("(L - L0) / |L0|" )
 plt.show()
+
+plt.figure()
+plt.plot(sim.energy_drift)
+plt.title("Relative Energy Drift")
+plt.xlabel("Timestep")
+plt.ylabel("(E - E0)/|E0|")
+
+plt.figure()
+plt.plot(sim.angular_momentum_drift)
+plt.title("Relative Angular Momentum Drift (about origin)")
+plt.xlabel("Timestep")
+plt.ylabel("(L - L0)/|L0|")
+
+
+
+

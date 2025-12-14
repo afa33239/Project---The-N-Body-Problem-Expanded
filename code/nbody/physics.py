@@ -7,9 +7,9 @@ from typing import List
 from code.nbody.bodies import Body, G
 
 
-def compute_accelerations(bodies: List[Body], cfg): #added softening to calculate accelerations as well
-
+def compute_accelerations(bodies: List[Body], cfg):
     N = len(bodies)
+
     ax = [0.0] * N
     ay = [0.0] * N
 
@@ -17,18 +17,30 @@ def compute_accelerations(bodies: List[Body], cfg): #added softening to calculat
 
     for i in range(N):
         bi = bodies[i]
-        for j in range(N):
-            if i == j:
-                continue
-
+        for j in range(i + 1, N):
             bj = bodies[j]
+
             dx = bj.x - bi.x
             dy = bj.y - bi.y
-            dist2 = dx*dx + dy*dy + soft2
-            dist32 = dist2 ** 1.5
 
-            ax[i] += dx * bj.m * G / dist32
-            ay[i] += dy * bj.m * G / dist32
+            r2 = dx * dx + dy * dy + soft2
+            r = r2 ** 0.5
+            r3 = r2 * r
+
+            # force magnitude per unit mass
+            f = G / r3
+
+            ax_i = f * bj.m * dx
+            ay_i = f * bj.m * dy
+
+            ax_j = -f * bi.m * dx
+            ay_j = -f * bi.m * dy
+
+            ax[i] += ax_i
+            ay[i] += ay_i
+
+            ax[j] += ax_j
+            ay[j] += ay_j
 
     return ax, ay
 

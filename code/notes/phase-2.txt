@@ -16,4 +16,7 @@ Simulation should record:
 
 After each step, Simulation calls physics functions to compute and store energies.
 
+The simulation should also deal with energy and momenutm drifts appropriately to leapfrog integrator (currently).
+
 This will be used later to test integrator stability, Barnes–Hut accuracy, and adaptive timestep behavior.
+

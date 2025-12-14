@@ -1,15 +1,17 @@
-## this is an interface for different integrators to implement
+
 
 class Integrator:
-
-    #step(snapshot_of_universe, simulation_settings, function_that_computes_acceleration) 
+    def initialize(self, state, cfg, accel_fn):
+        # default: do nothing
+        return state
 
     def step(self, state, cfg, accel_fn):
+        raise NotImplementedError()
 
-        raise NotImplementedError() #raisies error if called directly and not by subclass
-    
-
-
-
-    #: is used to describe what the variable should be (only hint) i.e. method(x: int, y: str):
-    # -> it indicates the return type of the function (only hint) i.e. method(x,y) -> list:
+    def synchronize(self, state, cfg, accel_fn):
+        """
+        Return a state suitable for diagnostics where positions and velocities
+        correspond to the same time level (x^n, v^n).
+        Default: state already synchronized.
+        """
+        return state

@@ -2,42 +2,69 @@ from code.nbody.bodies import Body, SystemState
 from code.nbody.integrators import Integrator
 
 
-class LeapfrogIntegrator(Integrator): 
+class LeapfrogIntegrator(Integrator):
+    """
+    Kick-Drift leapfrog storing velocities at half-step.
+    Internal state:
+      x = x^n
+      v = v^{n+1/2}
+    """
 
-    def step(self, state, cfg, accel_fn):
-        
+    def initialize(self, state, cfg, accel_fn):
         bodies = state.bodies
         dt = cfg.dt
 
-        # 1) compute a_old
-        ax_old, ay_old = accel_fn(bodies) #cfg is still called internally 
+        ax, ay = accel_fn(bodies)
 
-        # We'll store updated bodies 
-        temp_bodies = []
-
-        #half-step velocity update + FULL position update
-        for i, b in enumerate(bodies):
-            # half-step velocity
-            vhx = b.vx + 0.5 * dt * ax_old[i]
-            vhy = b.vy + 0.5 * dt * ay_old[i]
-
-            # position update
-            new_x = b.x + dt * vhx
-            new_y = b.y + dt * vhy
-
-            temp_bodies.append(Body(b.m, new_x, new_y, vhx, vhy)) #appends the body with UPDATED position but OLD half-step velocity
-
-        # compute a_new from UPDATED positions
-        ax_new, ay_new = accel_fn(temp_bodies)
-
-        # second half-step velocity update
         new_bodies = []
-        for i, b in enumerate(temp_bodies):
-            vx_new = b.vx + 0.5 * dt * (ax_old[i] + ax_new[i])
-            vy_new = b.vy + 0.5 * dt * (ay_old[i] + ay_new[i])
+        for i, b in enumerate(bodies):
+            # v^{1/2} = v^0 + 0.5*dt*a(x^0)
+            vx_half = b.vx + 0.5 * dt * ax[i]
+            vy_half = b.vy + 0.5 * dt * ay[i]
+            new_bodies.append(Body(b.m, b.x, b.y, vx_half, vy_half))
+
+        return SystemState(new_bodies)
+
+    def step(self, state, cfg, accel_fn):
+        bodies = state.bodies
+        dt = cfg.dt
+
+        # Drift: x^{n+1} = x^n + dt * v^{n+1/2}
+        drifted = []
+        for b in bodies:
+            drifted.append(Body(
+                b.m,
+                b.x + dt * b.vx,
+                b.y + dt * b.vy,
+                b.vx,
+                b.vy
+            ))
+
+        # Kick: v^{n+3/2} = v^{n+1/2} + dt * a(x^{n+1})
+        ax_new, ay_new = accel_fn(drifted)
+
+        new_bodies = []
+        for i, b in enumerate(drifted):
+            vx_new = b.vx + dt * ax_new[i]
+            vy_new = b.vy + dt * ay_new[i]
             new_bodies.append(Body(b.m, b.x, b.y, vx_new, vy_new))
 
         return SystemState(new_bodies)
 
+    def synchronize(self, state, cfg, accel_fn):
+        """
+        Convert (x^n, v^{n+1/2}) -> (x^n, v^n) for diagnostics:
+          v^n = v^{n+1/2} - 0.5*dt*a(x^n)
+        """
+        bodies = state.bodies
+        dt = cfg.dt
 
+        ax, ay = accel_fn(bodies)
 
+        synced = []
+        for i, b in enumerate(bodies):
+            vx_full = b.vx - 0.5 * dt * ax[i]
+            vy_full = b.vy - 0.5 * dt * ay[i]
+            synced.append(Body(b.m, b.x, b.y, vx_full, vy_full))
+
+        return SystemState(synced)

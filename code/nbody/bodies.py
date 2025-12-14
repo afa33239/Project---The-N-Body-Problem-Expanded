@@ -36,5 +36,8 @@ class SystemState:
         self.bodies = bodies
 
     def copy(self):
-        # Shallow copy of bodies list
-        return SystemState(self.bodies[:])
+        # deep copy of system state
+        return SystemState([
+            Body(b.m, b.x, b.y, b.vx, b.vy) 
+            for b in self.bodies
+        ])
