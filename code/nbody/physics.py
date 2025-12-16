@@ -54,7 +54,7 @@ def compute_accelerations(bodies: List[Body], cfg):
 def compute_kinetic_energy(bodies: List[Body]):
     Total = 0.0
     for b in bodies:
-        Total += 0.5 * b.m * (b.vx ** 2 + b.vy ** 2)
+        Total += 0.5 * b.m * (b.vx ** 2 + b.vy ** 2 + b.vz **2)
     return Total
 
 def compute_potential_energy(bodies: List[Body],cfg):
@@ -67,8 +67,9 @@ def compute_potential_energy(bodies: List[Body],cfg):
             bj = bodies[j]
             dx = bj.x - bi.x
             dy = bj.y - bi.y
+            dz = bj.z - bi.z
 
-            dist = math.sqrt(dx*dx + dy*dy + cfg.softening * cfg.softening)
+            dist = math.sqrt(dx*dx + dy*dy + dz*dz + cfg.softening * cfg.softening)
 
             total += -G * bi.m * bj.m / dist
     return total
