@@ -14,14 +14,15 @@ class LeapfrogIntegrator(Integrator):
         bodies = state.bodies
         dt = cfg.dt
 
-        ax, ay = accel_fn(bodies)
+        ax, ay, az = accel_fn(bodies)
 
         new_bodies = []
         for i, b in enumerate(bodies):
             # v^{1/2} = v^0 + 0.5*dt*a(x^0)
             vx_half = b.vx + 0.5 * dt * ax[i]
             vy_half = b.vy + 0.5 * dt * ay[i]
-            new_bodies.append(Body(b.m, b.x, b.y, vx_half, vy_half))
+            vz_half = b.vz + 0.5 * dt * az[i]
+            new_bodies.append(Body(b.m, b.x, b.y, b.z, vx_half, vy_half, vz_half))
 
         return SystemState(new_bodies)
 
@@ -36,18 +37,21 @@ class LeapfrogIntegrator(Integrator):
                 b.m,
                 b.x + dt * b.vx,
                 b.y + dt * b.vy,
+                b.z + dt * b.vz,
                 b.vx,
-                b.vy
+                b.vy,
+                b.vz
             ))
 
         # Kick: v^{n+3/2} = v^{n+1/2} + dt * a(x^{n+1})
-        ax_new, ay_new = accel_fn(drifted)
+        ax_new, ay_new, az_new = accel_fn(drifted)
 
         new_bodies = []
         for i, b in enumerate(drifted):
             vx_new = b.vx + dt * ax_new[i]
             vy_new = b.vy + dt * ay_new[i]
-            new_bodies.append(Body(b.m, b.x, b.y, vx_new, vy_new))
+            vz_new = b.vz + dt * az_new[i]
+            new_bodies.append(Body(b.m, b.x, b.y, b.z, vx_new, vy_new, vz_new))
 
         return SystemState(new_bodies)
 
@@ -59,12 +63,13 @@ class LeapfrogIntegrator(Integrator):
         bodies = state.bodies
         dt = cfg.dt
 
-        ax, ay = accel_fn(bodies)
+        ax, ay, az = accel_fn(bodies)
 
         synced = []
         for i, b in enumerate(bodies):
             vx_full = b.vx - 0.5 * dt * ax[i]
             vy_full = b.vy - 0.5 * dt * ay[i]
-            synced.append(Body(b.m, b.x, b.y, vx_full, vy_full))
+            vz_full = b.vz - 0.5 * dt * az[i]
+            synced.append(Body(b.m, b.x, b.y, b.z, vx_full, vy_full, vz_full))
 
         return SystemState(synced)
