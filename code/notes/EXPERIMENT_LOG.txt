@@ -1,13 +1,8 @@
 DATE: 14/12/25
 Integrator: LeapFrog (sympletic)
-dt, steps, softening: 
-
-dt = 2e-4
-timesteps = 5000
-softening = 0.0
+dt, steps, softening: dt = 2e-4, timesteps = 5000, softening = 0.0
 
 Scenario:
-
 Two-body Sun–planet system in 2D.
 Planet initialized on circular orbit at r = 1 with v = 2π.
 Sun given compensating velocity to ensure total linear momentum ≈ 0.
@@ -33,3 +28,38 @@ Not explicitly measured in this test.
 COM remains stationary, implying |P| ≈ 0 within numerical precision.
 
 Next action: Add explicit linear momentum and center-of-mass drift diagnostics to complete Phase 2 validation.
+
+
+
+
+
+
+
+DATE: 14/12/25
+Integrator: Leapfrog (Velocity Verlet)
+dt, steps, softening: dt = 2e-4, steps = 5000, softening = 0.0
+
+Scenario:
+Two-body Sun–planet system, near-circular orbit.
+Initial total linear momentum ≈ 0.
+Measurements taken in diagnostic (time-aligned) state.
+
+Expected:
+- Energy: bounded oscillations, no secular drift
+- Angular momentum (COM frame): conserved to machine precision
+- Linear momentum: 0 up to floating-point noise
+- COM position: no systematic drift
+
+Observed max energy drift: 1.6 × 10⁻⁹ (bounded oscillation)
+
+Observed max L_com drift: 2 × 10⁻¹⁵
+
+Observed max |P| drift: 3 × 10⁻¹⁷
+
+Observed COM drift: 1 × 10⁻¹⁷
+
+Conclusion:
+Integrator behaves correctly. Conservation laws satisfied to expected numerical precision.
+
+Next action:
+Compare to Eulers.

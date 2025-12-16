@@ -84,3 +84,18 @@ def compute_linear_momentum(bodies):
     return (px_total, py_total)
 
 
+def compute_center_of_mass(bodies):
+    total_mass = 0.0
+    x_cm = 0.0
+    y_cm = 0.0
+    for b in bodies:
+        total_mass += b.m
+        x_cm += b.m * b.x
+        y_cm += b.m * b.y
+    if total_mass > 0:
+        x_cm /= total_mass
+        y_cm /= total_mass
+    return (x_cm, y_cm)
+
+
+
