@@ -1,7 +1,6 @@
 from code.nbody.bodies import Body
 from code.nbody.engine import Simulation, SimulationConfig
 from code.nbody.integrators.leapfrog import LeapfrogIntegrator
-from code.nbody.integrators.euler import EulerIntegrator
 import matplotlib.pyplot as plt
 import math
 
@@ -14,10 +13,10 @@ sun = Body(
 planet = Body(
     0.001,
     1.0, 0.0, 0.0,
-    0.0, 2 * math.pi, 0.0
+    0.0, 2 * math.pi, 0.1
 )
 
-cfg = SimulationConfig(dt=0.0002, timesteps=5000, softening=0.0)
+cfg = SimulationConfig(dt=2e-4, timesteps=5000, softening=0.0)
 
 sim = Simulation([sun, planet], cfg, integrator=LeapfrogIntegrator())
 sim.run()

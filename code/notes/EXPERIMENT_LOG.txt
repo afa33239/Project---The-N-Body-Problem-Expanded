@@ -135,3 +135,43 @@ Angular momentum magnitude, linear momentum, and center-of-mass remain conserved
 
 Next action:
 Extend validation with non-planar 3D orbits (z, vz != 0).
+
+
+
+
+
+
+DATE: 16/12/25
+Integrator: Leapfrog (Velocity Verlet, Symplectic)
+dt, steps, softening: dt = 2e-4, steps = 5000, softening = 0.0
+
+Scenario:
+Two-body Sun–planet system in full 3D with non-planar initial conditions.
+Planet initialized with a small vertical velocity component (vz ≠ 0), producing a tilted 3D orbit.
+
+Expected:
+
+Energy: bounded oscillatory error (no secular drift)
+
+Angular momentum: conserved in magnitude
+
+Linear momentum: small constant offset due to initial conditions
+
+Center-of-mass: linear drift consistent with non-zero total momentum
+
+Observed max relative energy drift: 2.0 × 10⁻⁹
+
+Observed max angular momentum drift: 6.0 × 10⁻¹⁵
+
+Observed max |P(t)|: 1.0 × 10⁻⁴
+
+Observed COM drift: 1.0 × 10⁻⁴
+
+Conclusion:
+Leapfrog integrator correctly preserves energy and angular momentum magnitude in fully 3D motion.
+The system evolves on a tilted orbit while maintaining bounded energy error and machine-precision angular momentum conservation.
+Observed linear momentum and center-of-mass drift are consistent with the intentionally non-zero initial total momentum.
+This validates the full 3D physics implementation, integrator updates, and diagnostic framework.
+
+Next action:
+Proceed to Phase 4 (Barnes–Hut solver development).
