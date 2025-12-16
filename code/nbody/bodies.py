@@ -10,24 +10,26 @@ G = 4 * (math.pi)**2
 
 
 class Body:
-    def __init__(self, m, x, y, vx=0, vy=0):
+    def __init__(self, m, x, y, z= 0.0, vx=0.0, vy=0.0, vz=0.0):
         self.m = m     # mass
         self.x = x     # position x
         self.y = y     # position y
+        self.z = z
         self.vx = vx   # velocity x
         self.vy = vy   # velocity y
+        self.vz = vz  # velocity z
 
     def squareDist(self, other):
-        return (self.x - other.x)**2 + (self.y - other.y)**2
+        return (self.x - other.x)**2 + (self.y - other.y)**2 + (self.z - other.z)**2
 
     def __str__(self):
-        return f"Body({self.m},{self.x},{self.y},{self.vx},{self.vy})"
+        return f"Body({self.m},{self.x},{self.y},{self.z},{self.vx},{self.vy},{self.vz})"
 
     def __repr__(self):
         return str(self)
 
     def asTuple(self):
-        return (self.m, self.x, self.y, self.vx, self.vy)
+        return (self.m, self.x, self.y, self.z, self.vx, self.vy, self.vz)
 
 
 class SystemState:
@@ -38,6 +40,6 @@ class SystemState:
     def copy(self):
         # deep copy of system state
         return SystemState([
-            Body(b.m, b.x, b.y, b.vx, b.vy) 
+            Body(b.m, b.x, b.y, b.z, b.vx, b.vy, b.vz) 
             for b in self.bodies
         ])
