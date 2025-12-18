@@ -253,3 +253,45 @@ Next actions:
 - Sweep θ to study accuracy vs approximation strength.
 - Validate stability across multiple random seeds.
 - Proceed to performance-focused testing (Phase 5).
+
+
+
+
+
+
+
+
+DATE: 18/12/25
+
+Integrator: Leapfrog (Velocity Verlet)
+Solvers: Direct O(N²) vs Barnes–Hut Octree (θ = 0.3)
+
+dt, steps, softening: dt = 2e-3, steps = 2000, softening = 1e-3
+
+Scenario:
+Random 3D N-body system (N = 15, seed = 42) with random initial positions, velocities, and masses.
+Same initial conditions used for both solvers.
+
+Expected:
+- Decreasing θ should increase accuracy (Barnes–Hut closer to Direct), at the cost of more tree traversal.
+- Energy remains bounded but may show step-like changes due to close encounters.
+- Angular momentum: Direct nearly constant; Barnes–Hut should improve vs larger θ but still not perfectly conserved.
+- Linear momentum and COM: Barnes–Hut should track Direct more closely as θ decreases.
+
+Observed:
+- Relative energy drift:
+  Barnes–Hut (θ = 0.3) is significantly closer to Direct than θ = 0.7; both remain bounded.
+- Angular momentum drift:
+  Barnes–Hut shows bounded deviation; Direct remains essentially flat.
+- |P(t)|:
+  Barnes–Hut overlaps Direct closely after initialization.
+- Center-of-mass drift:
+  Barnes–Hut overlaps Direct closely over the full run.
+
+Conclusion:
+Reducing θ improves Barnes–Hut accuracy as expected, bringing invariants and drift behavior closer to the DirectSolver baseline.
+System remains stable under Leapfrog, and deviations are consistent with controlled approximation error.
+
+Next actions:
+- Repeat θ sweep for θ = 0.5 and θ = 1.0 using the same N/seed.
+- Record how energy/ang-momentum drift change with θ to characterize accuracy vs approximation strength.

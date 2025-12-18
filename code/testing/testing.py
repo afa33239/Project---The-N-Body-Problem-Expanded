@@ -37,7 +37,7 @@ seed = 42
 bodies0 = make_random_bodies(N, seed=seed)
 
 sim_direct = run_sim([Body(*b.asTuple()) for b in bodies0], DirectSolver())
-sim_bh = run_sim([Body(*b.asTuple()) for b in bodies0], BarnesHutSolver(theta=0.7))
+sim_bh = run_sim([Body(*b.asTuple()) for b in bodies0], BarnesHutSolver(theta=0.3))
 
 plt.figure()
 plt.plot(sim_direct.energy_drift, label="Direct")
