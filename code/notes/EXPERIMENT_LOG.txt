@@ -213,3 +213,43 @@ Next actions:
 - Validate Barnes–Hut against DirectSolver for moderate N.
 - Study accuracy vs performance as a function of θ.
 - Proceed to performance-oriented testing (Phase 5).
+
+
+
+
+
+DATE: 18/12/25
+
+Integrator: Leapfrog (Velocity Verlet)
+Solvers: Direct O(N²) vs Barnes–Hut Octree (θ = 0.7)
+
+dt, steps, softening: dt = 2e-3, steps = 2000, softening = 1e-3
+
+Scenario:
+Random 3D N-body system (N = 15) with random initial positions, velocities, and masses.
+Same initial conditions used for both solvers.
+
+Expected:
+- Energy: bounded but noisy due to chaotic dynamics
+- Angular momentum: conserved for Direct, approximate for Barnes–Hut
+- Linear momentum: near-constant with small fluctuations
+- Center-of-mass: similar drift for both solvers
+
+Observed:
+- Relative energy drift:
+  Direct and Barnes–Hut remain bounded, with step-like changes during close encounters.
+- Angular momentum drift:
+  Direct remains flat; Barnes–Hut exhibits bounded fluctuations (~10⁻²).
+- |P(t)|:
+  Direct nearly constant; Barnes–Hut shows small bounded noise.
+- Center-of-mass drift:
+  Nearly identical between solvers, indicating no major bias from Barnes–Hut.
+
+Conclusion:
+For small chaotic N-body systems, Barnes–Hut reproduces DirectSolver dynamics qualitatively and remains numerically stable.
+Observed deviations are consistent with known approximation errors and chaotic sensitivity, not integrator failure.
+
+Next actions:
+- Sweep θ to study accuracy vs approximation strength.
+- Validate stability across multiple random seeds.
+- Proceed to performance-focused testing (Phase 5).
